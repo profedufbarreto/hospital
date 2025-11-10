@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sistema Hospitalar</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>🏥 Hospital</h2>
+        <button class="btn-close-sidebar" id="closeSidebar">✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-module="dashboard">
+          <span>📊 Dashboard</span>
+        </button>
+        <button class="nav-item" data-module="patients">
+          <span>👥 Prontuário Digital</span>
+        </button>
+        <button class="nav-item" data-module="vital-signs">
+          <span>❤️ Prova de Vida</span>
+        </button>
+        <button class="nav-item" data-module="medications">
+          <span>💊 Medicações</span>
+        </button>
+        <button class="nav-item" data-module="dosage">
+          <span>🧮 Calculadora de Dosagens</span>
+        </button>
+        <button class="nav-item" data-module="users">
+          <span>👤 Gerenciar Usuários</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <p id="userName">Usuário</p>
+          <small id="userRole">Enfermeiro(a)</small>
+        </div>
+        <button class="btn btn-secondary btn-block" id="logoutBtn">Sair</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <button class="btn-toggle-sidebar" id="openSidebar">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="header-actions">
+          <span id="currentDate"></span>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <!-- Dashboard Module -->
+        <div id="dashboard" class="module active">
+          <section class="dashboard-grid">
+            <div class="dashboard-card">
+              <h3>👥 Pacientes</h3>
+              <p class="stat-number" id="totalPatients">0</p>
+              <small>Registrados</small>
+            </div>
+            <div class="dashboard-card">
+              <h3>❤️ Provas de Vida</h3>
+              <p class="stat-number" id="totalVitalSigns">0</p>
+              <small>Registradas</small>
+            </div>
+            <div class="dashboard-card">
+              <h3>💊 Medicações</h3>
+              <p class="stat-number" id="totalMedications">0</p>
+              <small>Administradas</small>
+            </div>
+            <div class="dashboard-card">
+              <h3>👥 Usuários</h3>
+              <p class="stat-number" id="totalUsers">0</p>
+              <small>Cadastrados</small>
+            </div>
+          </section>
+        </div>
+
+        <!-- Patients Module -->
+        <div id="patients" class="module">
+          <div class="module-header">
+            <h2>Prontuário Digital</h2>
+            <button class="btn btn-primary" id="newPatientBtn">+ Novo Paciente</button>
+          </div>
+
+          <form id="patientForm" class="form-section" style="display: none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="firstName">Nome *</label>
+                <input type="text" id="firstName" name="firstName" required>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Sobrenome *</label>
+                <input type="text" id="lastName" name="lastName" required>
+              </div>
+              <div class="form-group">
+                <label for="dateOfBirth">Data de Nascimento (dd-mm-aaaa) *</label>
+                <input type="text" id="dateOfBirth" name="dateOfBirth" placeholder="25-12-1990" required>
+              </div>
+              <div class="form-group">
+                <label for="cep">CEP *</label>
+                <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+              </div>
+              <div class="form-group">
+                <label for="street">Rua</label>
+                <input type="text" id="street" name="street" readonly>
+              </div>
+              <div class="form-group">
+                <label for="neighborhood">Bairro</label>
+                <input type="text" id="neighborhood" name="neighborhood" readonly>
+              </div>
+              <div class="form-group">
+                <label for="city">Cidade</label>
+                <input type="text" id="city" name="city" readonly>
+              </div>
+              <div class="form-group">
+                <label for="houseNumber">Número da Casa *</label>
+                <input type="text" id="houseNumber" name="houseNumber" required>
+              </div>
+              <div class="form-group">
+                <label for="admissionDate">Data da Baixa (dd-mm-aaaa) *</label>
+                <input type="text" id="admissionDate" name="admissionDate" placeholder="25-12-1990" required>
+              </div>
+              <div class="form-group">
+                <label for="admissionTime">Hora da Baixa (hh:mm) *</label>
+                <input type="time" id="admissionTime" name="admissionTime" required>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Salvar Paciente</button>
+              <button type="button" class="btn btn-secondary" id="cancelPatientBtn">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="patientsList" class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Data Nascimento</th>
+                  <th>Endereço</th>
+                  <th>Data Admissão</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="patientsTableBody">
+                <tr>
+                  <td colspan="5" class="text-center">Nenhum paciente registrado</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Vital Signs Module -->
+        <div id="vital-signs" class="module">
+          <div class="module-header">
+            <h2>Prova de Vida</h2>
+            <button class="btn btn-primary" id="newVitalSignsBtn">+ Registrar Prova</button>
+          </div>
+
+          <form id="vitalSignsForm" class="form-section" style="display: none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="vsPatientId">Paciente *</label>
+                <select id="vsPatientId" required>
+                  <option value="">Selecione um paciente</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bloodPressure">Pressão Arterial (ex: 120/80) *</label>
+                <input type="text" id="bloodPressure" placeholder="120/80" required>
+              </div>
+              <div class="form-group">
+                <label for="heartRate">Batimentos Cardíacos (bpm) *</label>
+                <input type="number" id="heartRate" min="0" required>
+              </div>
+              <div class="form-group">
+                <label for="spo2">SpO2 (%) *</label>
+                <input type="number" id="spo2" min="0" max="100" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="glucose">Glicose (mg/dL) *</label>
+                <input type="number" id="glucose" min="0" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="recordDate">Data (dd-mm-aaaa) *</label>
+                <input type="text" id="recordDate" placeholder="25-12-1990" required>
+              </div>
+              <div class="form-group">
+                <label for="recordTime">Hora (hh:mm) *</label>
+                <input type="time" id="recordTime" required>
+              </div>
+              <div class="form-group">
+                <label for="recordedBy">Realizado por *</label>
+                <input type="text" id="recordedBy" placeholder="Nome do profissional" required>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Salvar Prova</button>
+              <button type="button" class="btn btn-secondary" id="cancelVitalSignsBtn">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="vitalSignsList" class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Pressão</th>
+                  <th>Batimentos</th>
+                  <th>SpO2</th>
+                  <th>Glicose</th>
+                  <th>Data/Hora</th>
+                  <th>Realizado por</th>
+                </tr>
+              </thead>
+              <tbody id="vitalSignsTableBody">
+                <tr>
+                  <td colspan="7" class="text-center">Nenhuma prova registrada</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Medications Module -->
+        <div id="medications" class="module">
+          <div class="module-header">
+            <h2>Medicações</h2>
+            <button class="btn btn-primary" id="newMedicationBtn">+ Adicionar Medicação</button>
+          </div>
+
+          <form id="medicationForm" class="form-section" style="display: none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="medPatientId">Paciente *</label>
+                <select id="medPatientId" required>
+                  <option value="">Selecione um paciente</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="medicationSelect">Medicação *</label>
+                <select id="medicationSelect" required>
+                  <option value="">Selecione uma medicação</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="medicationOther">Outra Medicação</label>
+                <input type="text" id="medicationOther" placeholder="Se selecionou 'Outros'">
+              </div>
+              <div class="form-group checkbox">
+                <label>
+                  <input type="checkbox" id="isRequired">
+                  Necessário (S/N)
+                </label>
+              </div>
+              <div class="form-group">
+                <label for="administeredDate">Data (dd-mm-aaaa)</label>
+                <input type="text" id="administeredDate" placeholder="25-12-1990">
+              </div>
+              <div class="form-group">
+                <label for="administeredTime">Hora (hh:mm)</label>
+                <input type="time" id="administeredTime">
+              </div>
+              <div class="form-group full-width">
+                <label for="medicationNotes">Observações</label>
+                <textarea id="medicationNotes" placeholder="Adicione notas..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Salvar Medicação</button>
+              <button type="button" class="btn btn-secondary" id="cancelMedicationBtn">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="medicationsList" class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Medicação</th>
+                  <th>Necessário</th>
+                  <th>Data/Hora</th>
+                  <th>Notas</th>
+                </tr>
+              </thead>
+              <tbody id="medicationsTableBody">
+                <tr>
+                  <td colspan="5" class="text-center">Nenhuma medicação registrada</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Dosage Calculator Module -->
+        <div id="dosage" class="module">
+          <div class="module-header">
+            <h2>Calculadora de Dosagens</h2>
+          </div>
+
+          <div class="calculator-container">
+            <div class="calc-card">
+              <h3>Conversão de mg para ml</h3>
+              <div class="form-group">
+                <label for="calcMg">Dose em mg *</label>
+                <input type="number" id="calcMg" placeholder="500">
+              </div>
+              <div class="form-group">
+                <label for="calcConcentration">Concentração (mg/ml) *</label>
+                <input type="number" id="calcConcentration" placeholder="250">
+              </div>
+              <button class="btn btn-primary" onclick="calculateMgToMl()">Calcular</button>
+              <p id="resultMgToMl" class="result"></p>
+            </div>
+
+            <div class="calc-card">
+              <h3>Conversão para Gotas</h3>
+              <div class="form-group">
+                <label for="calcMlDrops">Volume em ml *</label>
+                <input type="number" id="calcMlDrops" placeholder="10">
+              </div>
+              <div class="form-group">
+                <label for="calcDropsPerMl">Gotas/ml (padrão: 20) *</label>
+                <input type="number" id="calcDropsPerMl" value="20">
+              </div>
+              <button class="btn btn-primary" onclick="calculateMlToDrops()">Calcular</button>
+              <p id="resultMlToDrops" class="result"></p>
+            </div>
+
+            <div class="calc-card">
+              <h3>Gotas por Minuto</h3>
+              <div class="form-group">
+                <label for="calcTotalVolume">Volume Total (ml) *</label>
+                <input type="number" id="calcTotalVolume" placeholder="500">
+              </div>
+              <div class="form-group">
+                <label for="calcTotalTime">Tempo Total (minutos) *</label>
+                <input type="number" id="calcTotalTime" placeholder="60">
+              </div>
+              <div class="form-group">
+                <label for="calcDropsMin">Gotas/ml (padrão: 20) *</label>
+                <input type="number" id="calcDropsMin" value="20">
+              </div>
+              <button class="btn btn-primary" onclick="calculateDropsPerMinute()">Calcular</button>
+              <p id="resultDropsPerMinute" class="result"></p>
+            </div>
+
+            <div class="calc-card">
+              <h3>Dose por Peso</h3>
+              <div class="form-group">
+                <label for="calcWeight">Peso do Paciente (kg) *</label>
+                <input type="number" id="calcWeight" placeholder="70">
+              </div>
+              <div class="form-group">
+                <label for="calcDosePerKg">Dose por Kg *</label>
+                <input type="number" id="calcDosePerKg" placeholder="10" step="0.01">
+              </div>
+              <button class="btn btn-primary" onclick="calculateDoseByWeight()">Calcular</button>
+              <p id="resultDoseByWeight" class="result"></p>
+            </div>
+
+            <div class="calc-card">
+              <h3>Índice de Massa Corporal (IMC)</h3>
+              <div class="form-group">
+                <label for="calcBmiWeight">Peso (kg) *</label>
+                <input type="number" id="calcBmiWeight" placeholder="70">
+              </div>
+              <div class="form-group">
+                <label for="calcBmiHeight">Altura (m) *</label>
+                <input type="number" id="calcBmiHeight" placeholder="1.75" step="0.01">
+              </div>
+              <button class="btn btn-primary" onclick="calculateBMI()">Calcular</button>
+              <p id="resultBMI" class="result"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Management Module -->
+        <div id="users" class="module">
+          <div class="module-header">
+            <h2>Gerenciar Usuários</h2>
+            <button class="btn btn-primary" id="newUserBtn">+ Novo Usuário</button>
+          </div>
+
+          <form id="userForm" class="form-section" style="display: none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="userUsername">Usuário *</label>
+                <input type="text" id="userUsername" required>
+              </div>
+              <div class="form-group">
+                <label for="userPassword">Senha *</label>
+                <input type="password" id="userPassword" required>
+              </div>
+              <div class="form-group">
+                <label for="userName">Nome *</label>
+                <input type="text" id="userName" required>
+              </div>
+              <div class="form-group">
+                <label for="userEmail">Email</label>
+                <input type="email" id="userEmail">
+              </div>
+              <div class="form-group">
+                <label for="userRole">Papel *</label>
+                <select id="userRole" required>
+                  <option value="admin">Administrador</option>
+                  <option value="technician">Técnico</option>
+                  <option value="nurse">Enfermeiro(a)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Salvar Usuário</button>
+              <button type="button" class="btn btn-secondary" id="cancelUserBtn">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="usersList" class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Papel</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="6" class="text-center">Nenhum usuário</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/dashboard.js"></script>
+  <script src="/assets/js/dosage-calculator.js"></script>
+</body>
+</html>

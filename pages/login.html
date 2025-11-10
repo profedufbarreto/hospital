@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Prontuário Eletrônico - Login</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>🏥 Sistema Hospitalar</h1>
+        <p>Prontuário Eletrônico</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Digite seu usuário"
+            required
+            autofocus
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Digite sua senha"
+            required
+          >
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/login.js"></script>
+</body>
+</html>

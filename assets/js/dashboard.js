@@ -58,6 +58,43 @@ function updateCurrentDate() {
   document.getElementById('currentDate').textContent = dateString;
 }
 
+// ==================== Helpers: Input Masks ====================
+// Aplica máscara de data (dd/mm/yyyy) em um input
+function applyDateMaskToInput(input) {
+  if (!input) return;
+
+  input.addEventListener('input', (e) => {
+    const original = input.value;
+    // remover tudo que não é dígito
+    let digits = original.replace(/\D/g, '');
+
+    if (digits.length > 8) {
+      digits = digits.slice(0, 8);
+    }
+
+    // inserir barras: dd/mm/yyyy
+    let formatted = digits;
+    if (digits.length > 4) {
+      formatted = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+    } else if (digits.length > 2) {
+      formatted = digits.slice(0,2) + '/' + digits.slice(2);
+    }
+
+    input.value = formatted;
+  });
+
+  // prevenir colar conteúdo inválido
+  input.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const paste = (e.clipboardData || window.clipboardData).getData('text');
+    const onlyDigits = paste.replace(/\D/g, '').slice(0,8);
+    let formatted = onlyDigits;
+    if (onlyDigits.length > 4) formatted = onlyDigits.slice(0,2) + '/' + onlyDigits.slice(2,4) + '/' + onlyDigits.slice(4);
+    else if (onlyDigits.length > 2) formatted = onlyDigits.slice(0,2) + '/' + onlyDigits.slice(2);
+    input.value = formatted;
+  });
+}
+
 // ==================== Data Loading ====================
 async function loadData() {
   try {
@@ -211,6 +248,14 @@ function setupEventListeners() {
   });
 
   document.getElementById('userForm')?.addEventListener('submit', submitUserForm);
+
+  // Aplicar máscara de data nos inputs relevantes (dd/mm/yyyy)
+  [
+    'dateOfBirth',
+    'admissionDate',
+    'recordDate',
+    'administeredDate'
+  ].forEach(id => applyDateMaskToInput(document.getElementById(id)));
 }
 
 // ==================== Module Switching ====================
@@ -277,13 +322,13 @@ async function submitPatientForm(e) {
   const patientData = {
     firstName: document.getElementById('firstName').value,
     lastName: document.getElementById('lastName').value,
-    dateOfBirth: document.getElementById('dateOfBirth').value,
+    dateOfBirth: document.getElementById('dateOfBirth').value.replace(/\//g, '-'),
     cep: document.getElementById('cep').value,
     street: document.getElementById('street').value,
     neighborhood: document.getElementById('neighborhood').value,
     city: document.getElementById('city').value,
     houseNumber: document.getElementById('houseNumber').value,
-    admissionDate: document.getElementById('admissionDate').value,
+    admissionDate: document.getElementById('admissionDate').value.replace(/\//g, '-'),
     admissionTime: document.getElementById('admissionTime').value
   };
 
@@ -336,7 +381,7 @@ async function submitVitalSignsForm(e) {
     heartRate: parseInt(document.getElementById('heartRate').value),
     spo2: parseFloat(document.getElementById('spo2').value),
     glucose: parseFloat(document.getElementById('glucose').value),
-    recordDate: document.getElementById('recordDate').value,
+    recordDate: document.getElementById('recordDate').value.replace(/\//g, '-'),
     recordTime: document.getElementById('recordTime').value,
     recordedBy: document.getElementById('recordedBy').value
   };
@@ -400,7 +445,7 @@ async function submitMedicationForm(e) {
     medicationName: medicationName,
     isRequired: document.getElementById('isRequired').checked,
     notes: document.getElementById('medicationNotes').value,
-    administeredDate: document.getElementById('administeredDate').value,
+    administeredDate: document.getElementById('administeredDate').value.replace(/\//g, '-'),
     administeredTime: document.getElementById('administeredTime').value
   };
 
